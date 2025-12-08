@@ -1,15 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@700&display=swap');
 
 :root {
-  --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --accent-color: #2575fc;
-  --accent-gradient: linear-gradient(90deg, #2575fc, #6a11cb);
-  --text-main: #2d3436;
-  --text-muted: #636e72;
-  --font-main: 'Inter', sans-serif;
-  --font-heading: 'Outfit', sans-serif;
+  /* 高级纯色背景：极简淡雅灰 */
+  --bg-gradient: #f4f6f9;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --accent-color: #3b82f6;
+  /* 更稳重的蓝色 */
+  --accent-gradient: linear-gradient(90deg, #3b82f6, #2563eb);
+  --text-main: #1f2937;
+  /* 深灰黑，比纯黑柔和 */
+  --text-muted: #6b7280;
+  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Outfit', system-ui, sans-serif;
 }
 
 body {

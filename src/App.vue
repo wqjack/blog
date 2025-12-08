@@ -4,13 +4,13 @@
       <span class="logo-text">Jey<span class="highlight">.Dev</span></span>
     </div>
     <nav>
-      <router-link to="/">Home</router-link>
-      <router-link to="/interview">Interview</router-link>
-      <a href="#">Articles</a>
-      <a href="#">Projects</a>
-      <a href="#">About</a>
+      <router-link to="/">首页</router-link>
+      <router-link to="/interview">面试题库</router-link>
+      <a href="#">文章</a>
+      <a href="#">项目</a>
+      <a href="#">关于</a>
     </nav>
-    <button class="btn-sm">Contact Me</button>
+    <button class="btn-sm">联系我</button>
   </header>
 
   <main>

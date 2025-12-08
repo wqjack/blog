@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <div class="hero-section">
-      <h1>Code with <span class="highlight">Passion</span></h1>
-      <p class="subtitle">Daily wisdom for the modern developer.</p>
+      <h1>代码 <span class="highlight">不止</span></h1>
+      <p class="subtitle">写给开发者的每日灵感与思考。</p>
     </div>
 
     <div class="quotes-container">
@@ -22,31 +22,31 @@ import { ref } from 'vue'
 
 const quotes = ref([
   {
-    text: "The only way to do great work is to love what you do.",
-    author: "Steve Jobs"
+    text: "成就伟业的唯一途径，是热爱你所做的事。",
+    author: "Steve Jobs / 乔布斯"
   },
   {
-    text: "First, solve the problem. Then, write the code.",
+    text: "先解决问题，再写代码。",
     author: "John Johnson"
   },
   {
-    text: "Simplicity is the soul of efficiency.",
+    text: "简洁是效率的灵魂。",
     author: "Austin Freeman"
   },
   {
-    text: "Make it work, make it right, make it fast.",
+    text: "让它跑通，让它正确，让它变快。",
     author: "Kent Beck"
   },
   {
-    text: "Clean code always looks like it was written by someone who cares.",
-    author: "Robert C. Martin"
+    text: "整洁的代码看起来就像是由在乎它的人写的。",
+    author: "Robert C. Martin (Uncle Bob)"
   },
   {
-    text: "It’s not a bug; it’s an undocumented feature.",
-    author: "Anonymous"
+    text: "这不是 bug，这是一个未文档化的特性。",
+    author: "匿名 / Anonymous"
   },
   {
-    text: "Programming is the art of algorithm design and the craft of debugging errant code.",
+    text: "编程是算法设计的艺术，也是调试代码的工艺。",
     author: "Ellen Ullman"
   }
 ])
@@ -54,86 +54,94 @@ const quotes = ref([
 
 <style scoped>
 .home {
-  padding: 40px 0;
+  padding: 60px 0;
   max-width: 900px;
   margin: 0 auto;
 }
 
 .hero-section {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 70px;
 }
 
 .hero-section h1 {
   font-size: 3.5rem;
   margin-bottom: 15px;
   color: var(--text-main);
-  letter-spacing: -1px;
+  letter-spacing: 2px;
+  font-weight: 800;
 }
 
 .highlight {
   color: var(--accent-color);
   position: relative;
   display: inline-block;
+  padding: 0 5px;
 }
 
+/* 简约下划线风格 */
 .highlight::after {
   content: '';
   position: absolute;
-  bottom: 5px;
+  bottom: 8px;
   left: 0;
   width: 100%;
-  height: 10px;
+  height: 12px;
   background: var(--accent-color);
-  opacity: 0.2;
+  opacity: 0.15;
   z-index: -1;
-  transform: skewX(-15deg);
+  border-radius: 4px;
 }
 
 .subtitle {
   font-size: 1.2rem;
   color: var(--text-muted);
+  letter-spacing: 1px;
 }
 
 .quotes-container {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 25px;
+  gap: 30px;
 }
 
 .quote-card {
-  padding: 30px 40px;
+  padding: 35px 50px;
   position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   animation: slideUp 0.6s ease-out forwards;
   opacity: 0;
-  transform: translateY(20px);
-  background: var(--glass-bg);
+  transform: translateY(30px);
+  background: white; /* 纯色卡片更高级 */
+  border: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .quote-card:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
 }
 
 .quote-icon {
-  font-size: 4rem;
+  font-size: 5rem;
   position: absolute;
-  top: -10px;
-  left: 10px;
-  color: var(--accent-color);
-  opacity: 0.2;
+  top: 10px;
+  left: 15px;
+  color: #e5e7eb; /* 极淡的灰色 */
   font-family: serif;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .quote-text {
-  font-size: 1.25rem;
-  line-height: 1.6;
+  font-size: 1.3rem;
+  line-height: 1.7;
   font-weight: 500;
   color: var(--text-main);
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   position: relative;
   z-index: 1;
+  font-family: 'PingFang SC', system-ui, sans-serif;
 }
 
 .quote-author {
@@ -141,11 +149,13 @@ const quotes = ref([
   font-size: 0.95rem;
   color: var(--text-muted);
   font-weight: 600;
+  position: relative;
+  z-index: 1;
 }
 
 .dash {
   color: var(--accent-color);
-  margin-right: 5px;
+  margin-right: 8px;
 }
 
 @keyframes slideUp {
@@ -161,7 +171,7 @@ const quotes = ref([
   }
   
   .quote-card {
-    padding: 25px;
+    padding: 25px 30px;
   }
 }
 </style>
