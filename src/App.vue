@@ -6,7 +6,7 @@
     <nav>
       <router-link to="/">首页</router-link>
       <router-link to="/interview">面试题库</router-link>
-      <a href="#">文章</a>
+      <router-link to="/articles">文章</router-link>
       <a href="#">项目</a>
       <a href="#">关于</a>
     </nav>
