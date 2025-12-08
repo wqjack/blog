@@ -36,6 +36,11 @@
   </main>
 
   <footer>
+    <div class="footer-links">
+      <a href="/rss.xml" target="_blank" class="rss-link">
+        <span class="icon">📡</span> RSS Feed
+      </a>
+    </div>
     <p>&copy; 2025 Jey. Built with Vue 3 & Vite.</p>
   </footer>
 </template>
@@ -184,6 +189,29 @@ footer {
   font-size: 0.9rem;
   margin-top: 60px;
   border-top: 1px solid var(--glass-border);
+}
+
+.footer-links {
+  margin-bottom: 20px;
+}
+
+.rss-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 6px 15px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.03);
+  transition: all 0.3s ease;
+}
+
+.rss-link:hover {
+  background: #f26522; /* RSS Orange */
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(242, 101, 34, 0.3);
 }
 
 .fade-enter-active,
