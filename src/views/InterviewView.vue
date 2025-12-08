@@ -213,7 +213,6 @@ const filteredItems = computed(() => {
 
 <style scoped>
 .interview-page {
-  /* Use full width for layout */
   max-width: 1400px; 
   margin: 0 auto;
   min-height: 80vh;
@@ -231,10 +230,11 @@ const filteredItems = computed(() => {
   width: 280px;
   flex-shrink: 0;
   position: sticky;
-  top: 100px; /* Offset for navbar */
+  top: 100px;
   max-height: calc(100vh - 120px);
   overflow-y: auto;
   padding: 20px;
+  background: var(--glass-bg); /* Use var */
 }
 
 .sidebar-header h2 {
@@ -242,7 +242,7 @@ const filteredItems = computed(() => {
   margin-bottom: 20px;
   color: var(--text-main);
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Darker border */
 }
 
 .category-list {
@@ -267,14 +267,14 @@ const filteredItems = computed(() => {
 }
 
 .category-list li:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.05); /* Darker hover */
   color: var(--text-main);
 }
 
 .category-list li.active {
   background: var(--accent-gradient);
   color: white;
-  box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3); /* Match accent */
 }
 
 .cat-icon {
@@ -284,7 +284,7 @@ const filteredItems = computed(() => {
 .cat-count {
   font-size: 0.8rem;
   opacity: 0.7;
-  background: rgba(0,0,0,0.2);
+  background: rgba(255,255,255,0.3);
   padding: 2px 8px;
   border-radius: 10px;
 }
@@ -292,7 +292,7 @@ const filteredItems = computed(() => {
 /* Main Content Styles */
 .main-content {
   flex: 1;
-  min-width: 0; /* Fix flex overflow */
+  min-width: 0;
 }
 
 .category-header {
@@ -301,11 +301,15 @@ const filteredItems = computed(() => {
 
 .category-header h1 {
   font-size: 2.5rem;
-  background: linear-gradient(to right, #fff, #bbb);
+  background: linear-gradient(to right, #2d3436, #636e72); /* Dark gradient text */
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 10px;
+}
+
+.subtitle {
+  color: var(--text-muted);
 }
 
 /* Search */
@@ -314,8 +318,8 @@ const filteredItems = computed(() => {
   align-items: center;
   padding: 12px 20px;
   margin-bottom: 30px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.5); /* Lighter bg */
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 12px;
 }
 
@@ -323,9 +327,13 @@ const filteredItems = computed(() => {
   flex: 1;
   background: transparent;
   border: none;
-  color: white;
+  color: var(--text-main);
   font-size: 1rem;
   outline: none;
+}
+.search-bar input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
 }
 
 /* Questions */
@@ -337,18 +345,21 @@ const filteredItems = computed(() => {
 
 .question-card {
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .question-card:hover {
-  border-color: rgba(0, 210, 255, 0.3);
+  border-color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
 .question-header {
   padding: 20px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* Align top for long titles */
+  align-items: flex-start;
   cursor: pointer;
 }
 
@@ -361,7 +372,8 @@ const filteredItems = computed(() => {
 .index-badge {
   font-size: 0.9rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.3);
+  color: var(--accent-color);
+  opacity: 0.6;
   font-family: monospace;
   min-width: 20px;
 }
@@ -381,13 +393,13 @@ const filteredItems = computed(() => {
 }
 
 .answer-wrapper {
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .answer-body {
   padding: 25px;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-main);
   line-height: 1.7;
   font-size: 1rem;
 }
@@ -399,7 +411,8 @@ const filteredItems = computed(() => {
   margin-top: 1.5em;
   margin-bottom: 0.5em;
   font-size: 1.1em;
-  color: white;
+  color: var(--text-main);
+  font-weight: 700;
 }
 
 .markdown-body :deep(p) {
@@ -417,26 +430,26 @@ const filteredItems = computed(() => {
 }
 
 .markdown-body :deep(code) {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.05); /* Dark code bg */
   padding: 2px 6px;
   border-radius: 4px;
   font-family: monospace;
-  color: #ff9e64;
+  color: #d63384; /* Pinkish code color */
 }
 
 .markdown-body :deep(pre) {
-  background: #1a1b26;
+  background: #2d3436; /* Dark block for code */
   padding: 15px;
   border-radius: 8px;
   overflow-x: auto;
   margin: 15px 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .markdown-body :deep(pre code) {
   background: transparent;
   padding: 0;
-  color: #a9b1d6;
+  color: #dfe6e9; /* Light text in code block */
   white-space: pre;
 }
 
@@ -448,8 +461,9 @@ const filteredItems = computed(() => {
 .markdown-body :deep(blockquote) {
   border-left: 4px solid var(--accent-color);
   padding-left: 15px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-muted);
   margin: 15px 0;
+  font-style: italic;
 }
 
 /* Mobile Responsive */
@@ -468,13 +482,13 @@ const filteredItems = computed(() => {
     left: 0;
     bottom: 0;
     width: 250px;
-    background: #1a1b2e; /* Solid background for legibility */
+    background: #ffffff; /* Solid white */
     z-index: 200;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     max-height: 100vh;
     border-radius: 0;
-    border-right: 1px solid var(--glass-border);
+    border-right: 1px solid rgba(0,0,0,0.1);
   }
 
   .page-container.sidebar-open .sidebar {
@@ -491,7 +505,7 @@ const filteredItems = computed(() => {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.2);
     z-index: 150;
     backdrop-filter: blur(2px);
   }
@@ -505,11 +519,12 @@ const filteredItems = computed(() => {
   }
 
   .menu-btn {
-    background: rgba(255,255,255,0.1);
-    border: none;
-    color: white;
+    background: white;
+    border: 1px solid rgba(0,0,0,0.1);
+    color: var(--text-main);
     padding: 8px 12px;
     border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   }
 
   .mobile-title {

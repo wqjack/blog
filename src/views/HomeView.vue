@@ -1,146 +1,167 @@
 <template>
   <div class="home">
-    <section class="hero glass-panel">
-      <div class="hero-content">
-        <h1>Welcome to My Universe</h1>
-        <p class="subtitle">Exploring code, design, and everything in between.</p>
-        <button class="btn">Read Latest</button>
-      </div>
-    </section>
+    <div class="hero-section">
+      <h1>Code with <span class="highlight">Passion</span></h1>
+      <p class="subtitle">Daily wisdom for the modern developer.</p>
+    </div>
 
-    <section class="posts-section">
-      <h2>Latest Stories</h2>
-      <div class="posts-grid">
-        <div v-for="post in posts" :key="post.id" class="post-card glass-panel">
-          <div class="post-image" :style="{ backgroundImage: `url(${post.image})` }"></div>
-          <div class="post-content">
-            <span class="category">{{ post.category }}</span>
-            <h3>{{ post.title }}</h3>
-            <p>{{ post.excerpt }}</p>
-            <a href="#" class="read-more">Read Article &rarr;</a>
-          </div>
+    <div class="quotes-container">
+      <div v-for="(quote, index) in quotes" :key="index" class="quote-card glass-panel" :style="{ animationDelay: `${index * 0.1}s` }">
+        <div class="quote-icon">“</div>
+        <p class="quote-text">{{ quote.text }}</p>
+        <div class="quote-author">
+          <span class="dash">—</span> {{ quote.author }}
         </div>
       </div>
-    </section>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-const posts = ref([
+const quotes = ref([
   {
-    id: 1,
-    title: 'The Future of Vue.js',
-    excerpt: 'Exploring the new features in Vue 3.3 and what they mean for developers.',
-    category: 'Development',
-    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    text: "The only way to do great work is to love what you do.",
+    author: "Steve Jobs"
   },
   {
-    id: 2,
-    title: 'Design Systems 101',
-    excerpt: 'How to build a scalable and consistent design system for your web apps.',
-    category: 'Design',
-    image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    text: "First, solve the problem. Then, write the code.",
+    author: "John Johnson"
   },
   {
-    id: 3,
-    title: 'Mastering CSS Grid',
-    excerpt: 'A comprehensive guide to creating complex layouts with CSS Grid.',
-    category: 'Tutorial',
-    image: 'https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    text: "Simplicity is the soul of efficiency.",
+    author: "Austin Freeman"
+  },
+  {
+    text: "Make it work, make it right, make it fast.",
+    author: "Kent Beck"
+  },
+  {
+    text: "Clean code always looks like it was written by someone who cares.",
+    author: "Robert C. Martin"
+  },
+  {
+    text: "It’s not a bug; it’s an undocumented feature.",
+    author: "Anonymous"
+  },
+  {
+    text: "Programming is the art of algorithm design and the craft of debugging errant code.",
+    author: "Ellen Ullman"
   }
-]);
+])
 </script>
 
 <style scoped>
-.hero {
-  margin: 40px 0;
-  padding: 80px 40px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+.home {
+  padding: 40px 0;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.hero h1 {
-  font-size: 4rem;
-  margin-bottom: 20px;
-  background: linear-gradient(to right, #fff, #aaa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.hero-section {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.hero-section h1 {
+  font-size: 3.5rem;
+  margin-bottom: 15px;
+  color: var(--text-main);
+  letter-spacing: -1px;
+}
+
+.highlight {
+  color: var(--accent-color);
+  position: relative;
+  display: inline-block;
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: var(--accent-color);
+  opacity: 0.2;
+  z-index: -1;
+  transform: skewX(-15deg);
 }
 
 .subtitle {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: var(--text-muted);
-  margin-bottom: 40px;
 }
 
-.posts-section {
-  padding: 40px 0;
-}
-
-.posts-section h2 {
-  font-size: 2.5rem;
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.posts-grid {
+.quotes-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: 1fr;
+  gap: 25px;
 }
 
-.post-card {
-  overflow: hidden;
-  transition: transform 0.3s ease;
+.quote-card {
+  padding: 30px 40px;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: slideUp 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+  background: var(--glass-bg);
 }
 
-.post-card:hover {
-  transform: translateY(-5px);
+.quote-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
 }
 
-.post-image {
-  height: 200px;
-  background-size: cover;
-  background-position: center;
-}
-
-.post-content {
-  padding: 25px;
-}
-
-.category {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.quote-icon {
+  font-size: 4rem;
+  position: absolute;
+  top: -10px;
+  left: 10px;
   color: var(--accent-color);
-  font-weight: 700;
-  margin-bottom: 10px;
-  display: block;
+  opacity: 0.2;
+  font-family: serif;
 }
 
-.post-content h3 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-}
-
-.post-content p {
-  color: var(--text-muted);
-  font-size: 1rem;
+.quote-text {
+  font-size: 1.25rem;
   line-height: 1.6;
-  margin-bottom: 20px;
+  font-weight: 500;
+  color: var(--text-main);
+  margin-bottom: 15px;
+  position: relative;
+  z-index: 1;
 }
 
-.read-more {
+.quote-author {
+  text-align: right;
+  font-size: 0.95rem;
+  color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.9rem;
+}
+
+.dash {
+  color: var(--accent-color);
+  margin-right: 5px;
+}
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {
-  .hero h1 {
+  .hero-section h1 {
     font-size: 2.5rem;
+  }
+  
+  .quote-card {
+    padding: 25px;
   }
 }
 </style>
