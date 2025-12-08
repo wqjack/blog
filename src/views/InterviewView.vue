@@ -1,182 +1,322 @@
 <template>
-  <div class="interview-container">
-    <div class="header">
-      <h1>Frontend <span class="highlight">Interview</span></h1>
-      <p class="subtitle">精选前端高频面试题库</p>
-    </div>
+  <div class="interview-page">
+    <div class="page-container" :class="{ 'sidebar-open': showSidebar }">
+      <!-- Mobile Toggle -->
+      <div class="mobile-header md:hidden">
+        <button class="menu-btn" @click="showSidebar = !showSidebar">
+          ☰ 目录
+        </button>
+        <span class="mobile-title">{{ currentCategory?.name || 'Interview' }}</span>
+      </div>
 
-    <div class="search-bar glass-panel">
-      <input 
-        v-model="searchQuery" 
-        type="text" 
-        placeholder="搜索题目 (例如: 'Vue', 'CSS', '闭包')..."
-      >
-      <span class="search-icon">🔍</span>
-    </div>
-
-    <div class="questions-list">
-      <div 
-        v-for="(item, index) in filteredQuestions" 
-        :key="index" 
-        class="question-card glass-panel"
-        :class="{ 'is-open': item.isOpen }"
-      >
-        <div class="question-header" @click="toggleQuestion(index)">
-          <h3>{{ item.question }}</h3>
-          <span class="toggle-icon">{{ item.isOpen ? '−' : '+' }}</span>
+      <!-- Sidebar -->
+      <aside class="sidebar glass-panel" :class="{ 'mobile-hidden': !showSidebar }">
+        <div class="sidebar-header">
+          <h2>题库目录</h2>
         </div>
-        <transition name="expand">
-          <div v-if="item.isOpen" class="answer-wrapper">
-            <div class="answer-body">
-              <div class="tags">
-                <span v-for="tag in item.tags" :key="tag" class="tag">{{ tag }}</span>
+        <ul class="category-list">
+          <li 
+            v-for="cat in categories" 
+            :key="cat.fileName"
+            :class="{ active: currentCategory?.fileName === cat.fileName }"
+            @click="selectCategory(cat)"
+          >
+            <span class="cat-icon">📁</span>
+            <span class="cat-name">{{ cat.name }}</span>
+            <span class="cat-count">{{ cat.items.length }}</span>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div v-if="currentCategory" class="category-header">
+          <h1>{{ currentCategory.title }}</h1>
+          <p class="subtitle">{{ currentCategory.id }}</p>
+        </div>
+
+        <!-- Search (Global or Local? Local is easier context) -->
+        <div class="search-bar glass-panel-sm">
+          <input 
+            v-model="searchQuery" 
+            type="text" 
+            placeholder="搜索当前分类下的题目..."
+          >
+          <span class="search-icon">🔍</span>
+        </div>
+
+        <div class="questions-list">
+          <div 
+            v-for="(item, index) in filteredItems" 
+            :key="index" 
+            class="question-card glass-panel"
+            :class="{ 'is-open': item.isOpen }"
+          >
+            <div class="question-header" @click="toggleItem(item)">
+              <div class="header-content">
+                <span class="index-badge">{{ index + 1 }}</span>
+                <h3>{{ item.title }}</h3>
               </div>
-              <div class="answer-content" v-html="item.answer"></div>
+              <span class="toggle-icon">{{ item.isOpen ? '−' : '+' }}</span>
             </div>
+            
+            <transition name="expand">
+              <div v-if="item.isOpen" class="answer-wrapper">
+                <div class="answer-body markdown-body" v-html="renderMarkdown(item.content)"></div>
+              </div>
+            </transition>
           </div>
-        </transition>
-      </div>
-      
-      <div v-if="filteredQuestions.length === 0" class="no-results">
-        <p>未找到相关题目</p>
-      </div>
+
+          <div v-if="filteredItems.length === 0" class="no-results">
+            <p>这里好像什么都没有...</p>
+          </div>
+        </div>
+      </main>
+
+      <!-- Overlay for mobile -->
+      <div 
+        v-if="showSidebar" 
+        class="sidebar-overlay md:hidden"
+        @click="showSidebar = false"
+      ></div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { marked } from 'marked'
 
+// Configure marked
+marked.setOptions({
+  breaks: true, // Enable line breaks
+  gfm: true // Enable GitHub Flavored Markdown
+})
+
+// === Data Loading & Parsing ===
+const categories = ref([])
+const currentCategory = ref(null)
+const showSidebar = ref(false)
 const searchQuery = ref('')
-const questions = ref([
-  {
-    question: 'Vue 3 生命周期有哪些变化？',
-    answer: `<p>在 Vue 3 Composition API 中，生命周期钩子函数发生了变化，通常以 <code>on</code> 开头，且需要按需导入：</p>
-    <ul>
-      <li><code>beforeCreate</code> / <code>created</code> ➔ <strong>setup()</strong> (直接使用)</li>
-      <li><code>beforeMount</code> ➔ <strong>onBeforeMount</strong></li>
-      <li><code>mounted</code> ➔ <strong>onMounted</strong></li>
-      <li><code>beforeUpdate</code> ➔ <strong>onBeforeUpdate</strong></li>
-      <li><code>updated</code> ➔ <strong>onUpdated</strong></li>
-      <li><code>beforeUnmount</code> ➔ <strong>onBeforeUnmount</strong></li>
-      <li><code>unmounted</code> ➔ <strong>onUnmounted</strong></li>
-    </ul>`,
-    tags: ['Vue', 'Basic'],
-    isOpen: true
-  },
-  {
-    question: 'GET 和 POST 请求的区别？',
-    answer: `<p>主要区别如下：</p>
-    <ul>
-      <li><strong>参数位置：</strong> GET 参数拼接在 URL 后；POST 放在 Request Body 中。</li>
-      <li><strong>安全性：</strong> POST 相对比 GET 安全（数据URL不可见），但都不防抓包。</li>
-      <li><strong>长度限制：</strong> GET 受限于浏览器 URL 长度；POST 理论上无限制。</li>
-      <li><strong>缓存：</strong> GET 请求通常会被浏览器主动缓存；POST 不会。</li>
-      <li><strong>幂等性：</strong> GET 是幂等的（多次请求结果一致）；POST 不是。</li>
-    </ul>`,
-    tags: ['Network', 'HTTP'],
-    isOpen: false
-  },
-  {
-    question: 'CSS 实现水平垂直居中的几种方式？',
-    answer: `<p>常见的核心方案：</p>
-    <ol>
-      <li><strong>Flexbox (推荐):</strong> <br><code>display: flex; justify-content: center; align-items: center;</code></li>
-      <li><strong>Grid (极简):</strong> <br><code>display: grid; place-items: center;</code></li>
-      <li><strong>Absolute + Transform:</strong> <br><code>position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);</code></li>
-      <li><strong>Line-height (单行文本):</strong> <br><code>height: 100px; line-height: 100px; text-align: center;</code></li>
-    </ol>`,
-    tags: ['CSS', 'Layout'],
-    isOpen: false
-  },
-  {
-    question: '什么是闭包 (Closure)？有哪些应用场景？',
-    answer: `<p><strong>定义：</strong> 闭包是指有权访问另一个函数作用域中变量的函数。简单说就是函数嵌套函数，内部函数引用了外部函数的变量。</p>
-    <p><strong>用途：</strong></p>
-    <ul>
-      <li><strong>数据私有化：</strong> 模拟私有变量，避免全局污染。</li>
-      <li><strong>保持状态：</strong> 如计数器、节流防抖函数。</li>
-    </ul>
-    <p><strong>注意：</strong> 不当使用可能导致内存泄漏（变量无法被垃圾回收）。</p>`,
-    tags: ['JavaScript', 'Core'],
-    isOpen: false
-  },
-  {
-    question: 'Promise 的状态有哪些？解决了什么问题？',
-    answer: `<p><strong>状态：</strong> Promise 有三种状态：<code>Pending</code> (进行中)、<code>Fulfilled</code> (已成功)、<code>Rejected</code> (已失败)。状态一旦改变不可逆。</p>
-    <p><strong>解决的问题：</strong></p>
-    <ul>
-      <li>解决了回调地狱 (Callback Hell)，使代码更扁平可读。</li>
-      <li>提供统一的异步处理机制 (then/catch)。</li>
-    </ul>`,
-    tags: ['JavaScript', 'Async'],
-    isOpen: false
-  },
-  {
-    question: 'Vue 3 中 ref 和 reactive 的区别？',
-    answer: `<p>两者都用于定义响应式数据：</p>
-    <ul>
-      <li><strong>ref:</strong> 主要用于定义基本数据类型 (String, Number)，访问值需要 <code>.value</code>。也能定义对象，内部会自动转为 reactive。</li>
-      <li><strong>reactive:</strong> 用于定义引用数据类型 (Object, Array)，不需要 <code>.value</code>，但解构会丢失响应性（需配合 <code>toRefs</code>）。</li>
-    </ul>
-    <p><strong>最佳实践：</strong> 推荐优先使用 <code>ref</code>，因为更显式且更灵活。</p>`,
-    tags: ['Vue', 'Composition API'],
-    isOpen: false
-  }
-])
 
-// 可以在这里切换所有问题的展开状态
-const toggleQuestion = (index) => {
-  // 查找在 filtered 列表中的 items
-  const item = filteredQuestions.value[index]
-  if (item) {
-    item.isOpen = !item.isOpen
+// Import all markdown files from the pack
+const modules = import.meta.glob('../frontend_interview_pack/*.md', { query: '?raw', import: 'default', eager: true })
+
+const parseModules = () => {
+  const result = []
+
+  for (const path in modules) {
+    const rawContent = modules[path]
+    const fileName = path.split('/').pop()
+    
+    // Extract logical name from filename (e.g., "01_JavaScript_题库.md" -> "JavaScript")
+    // Remove "01_" prefix and "_题库.md" suffix
+    let name = fileName.replace(/^\d+_/, '').replace(/_题库\.md$/, '').replace(/\.md$/, '')
+    // Replace underscores with spaces
+    name = name.replace(/_/g, ' ')
+
+    // Parse Sections (Split by "## ")
+    const lines = rawContent.split('\n')
+    let fileTitle = name
+    const items = []
+
+    // Simple line-based parser
+    let currentItem = null
+    let buffer = []
+    
+    // Extract File Title (H1)
+    const h1Match = rawContent.match(/^# (.*)/)
+    if (h1Match) {
+      fileTitle = h1Match[1]
+    }
+
+    // Split content by "## " to get sections
+    // We use a regex split that keeps the delimiter or we just manual split
+    const sections = rawContent.split(/\n## /)
+    
+    // The first section is usually the file intro/header, skip or keep as desc
+    // If the file starts with H1, the first split element contains the H1 and maybe intro text.
+    // The subsequent elements start with the H2 title.
+
+    sections.forEach((section, idx) => {
+      if (idx === 0) return // Skip header part for item list (or handle intro)
+
+      // First line is title
+      const sectionLines = section.split('\n')
+      const title = sectionLines[0].trim()
+      const content = sectionLines.slice(1).join('\n').trim()
+
+      if (title) {
+        items.push({
+          title, // "1 原型 & 原型链"
+          content, // The rest of the markdown
+          isOpen: false
+        })
+      }
+    })
+
+    result.push({
+      fileName,
+      id: fileName, // unique key
+      name, // Short display name
+      title: fileTitle, // Full title
+      items
+    })
+  }
+
+  // Sort by filename to keep 01, 02 order
+  result.sort((a, b) => a.fileName.localeCompare(b.fileName))
+  
+  categories.value = result
+  if (result.length > 0) {
+    currentCategory.value = result[0]
   }
 }
 
-const filteredQuestions = computed(() => {
-  if (!searchQuery.value) return questions.value
-  const query = searchQuery.value.toLowerCase()
-  return questions.value.filter(q => 
-    q.question.toLowerCase().includes(query) || 
-    q.tags.some(tag => tag.toLowerCase().includes(query))
+onMounted(() => {
+  parseModules()
+})
+
+// === Interaction ===
+const selectCategory = (cat) => {
+  currentCategory.value = cat
+  showSidebar.value = false // Close on mobile selection
+  searchQuery.value = ''
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+const toggleItem = (item) => {
+  item.isOpen = !item.isOpen
+}
+
+// === Rendering ===
+const renderMarkdown = (text) => {
+  if (!text) return ''
+  // Convert custom bold labels like "**题目**：" to styled HTML if we want, 
+  // currently marked handles **text** as bold. 
+  // We can treat it as standard markdown.
+  return marked.parse(text)
+}
+
+const filteredItems = computed(() => {
+  if (!currentCategory.value) return []
+  const items = currentCategory.value.items
+  if (!searchQuery.value) return items
+
+  const lowerQuery = searchQuery.value.toLowerCase()
+  return items.filter(item => 
+    item.title.toLowerCase().includes(lowerQuery) || 
+    item.content.toLowerCase().includes(lowerQuery)
   )
 })
 </script>
 
 <style scoped>
-.interview-container {
-  max-width: 800px;
+.interview-page {
+  /* Use full width for layout */
+  max-width: 1400px; 
   margin: 0 auto;
-  padding-bottom: 60px;
+  min-height: 80vh;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 40px;
-  margin-top: 20px;
+.page-container {
+  display: flex;
+  gap: 30px;
+  position: relative;
+  align-items: flex-start;
 }
 
-.header h1 {
-  font-size: 3rem;
-  margin-bottom: 10px;
-  background: linear-gradient(to right, #fff, #aaa);
+/* Sidebar Styles */
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px; /* Offset for navbar */
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.sidebar-header h2 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: var(--text-main);
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.category-list li {
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.category-list li:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+}
+
+.category-list li.active {
+  background: var(--accent-gradient);
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
+}
+
+.cat-icon {
+  margin-right: 10px;
+}
+
+.cat-count {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  background: rgba(0,0,0,0.2);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* Main Content Styles */
+.main-content {
+  flex: 1;
+  min-width: 0; /* Fix flex overflow */
+}
+
+.category-header {
+  margin-bottom: 30px;
+}
+
+.category-header h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(to right, #fff, #bbb);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
 }
 
-.subtitle {
-  color: var(--text-muted);
-  font-size: 1.1rem;
-}
-
+/* Search */
 .search-bar {
   display: flex;
   align-items: center;
-  padding: 15px 25px;
+  padding: 12px 20px;
   margin-bottom: 30px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
 }
 
 .search-bar input {
@@ -184,128 +324,198 @@ const filteredQuestions = computed(() => {
   background: transparent;
   border: none;
   color: white;
-  font-size: 1.1rem;
-  font-family: var(--font-main);
+  font-size: 1rem;
   outline: none;
 }
 
-.search-bar input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.search-icon {
-  font-size: 1.2rem;
-  opacity: 0.7;
-}
-
+/* Questions */
 .questions-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .question-card {
-  overflow: hidden;
   transition: all 0.3s ease;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .question-card:hover {
   border-color: rgba(0, 210, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-.question-card.is-open {
-  border-color: var(--accent-color);
-  background: rgba(255, 255, 255, 0.08); /* Slightly lighter */
 }
 
 .question-header {
-  padding: 20px 25px;
+  padding: 20px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start; /* Align top for long titles */
   cursor: pointer;
-  user-select: none;
+}
+
+.header-content {
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+}
+
+.index-badge {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.3);
+  font-family: monospace;
+  min-width: 20px;
 }
 
 .question-header h3 {
   font-size: 1.1rem;
-  font-weight: 500;
   margin: 0;
+  line-height: 1.5;
   color: var(--text-main);
 }
 
 .toggle-icon {
   font-size: 1.5rem;
   color: var(--accent-color);
-  font-weight: 300;
   margin-left: 15px;
+  line-height: 1;
 }
 
 .answer-wrapper {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .answer-body {
-  padding: 0 25px 25px 25px;
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.6;
+  padding: 25px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.7;
+  font-size: 1rem;
 }
 
-.tags {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
-  flex-wrap: wrap;
+/* Markdown Styles inside answer */
+.markdown-body :deep(h1),
+.markdown-body :deep(h2),
+.markdown-body :deep(h3) {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-size: 1.1em;
+  color: white;
 }
 
-.tag {
-  font-size: 0.75rem;
-  padding: 4px 10px;
-  border-radius: 12px;
-  background: rgba(0, 210, 255, 0.1);
-  color: var(--accent-color);
-  border: 1px solid rgba(0, 210, 255, 0.2);
+.markdown-body :deep(p) {
+  margin-bottom: 1em;
 }
 
-.answer-content :deep(strong) {
-  color: var(--accent-color);
+.markdown-body :deep(ul), 
+.markdown-body :deep(ol) {
+  padding-left: 1.5em;
+  margin-bottom: 1em;
 }
 
-.answer-content :deep(code) {
-  background: rgba(0, 0, 0, 0.3);
+.markdown-body :deep(li) {
+  margin-bottom: 0.5em;
+}
+
+.markdown-body :deep(code) {
+  background: rgba(255, 255, 255, 0.1);
   padding: 2px 6px;
   border-radius: 4px;
   font-family: monospace;
   color: #ff9e64;
 }
 
-.answer-content :deep(ul), .answer-content :deep(ol) {
-  padding-left: 20px;
+.markdown-body :deep(pre) {
+  background: #1a1b26;
+  padding: 15px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 15px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.answer-content :deep(li) {
-  margin-bottom: 8px;
+.markdown-body :deep(pre code) {
+  background: transparent;
+  padding: 0;
+  color: #a9b1d6;
+  white-space: pre;
 }
 
-.no-results {
-  text-align: center;
-  padding: 40px;
-  color: var(--text-muted);
+.markdown-body :deep(strong) {
+  color: var(--accent-color);
+  font-weight: 600;
 }
 
-/* Transitions */
-.expand-enter-active,
-.expand-leave-active {
-  transition: all 0.3s ease;
-  max-height: 500px; /* Approximate max height */
-  opacity: 1;
+.markdown-body :deep(blockquote) {
+  border-left: 4px solid var(--accent-color);
+  padding-left: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 15px 0;
 }
 
-.expand-enter-from,
-.expand-leave-to {
-  max-height: 0;
-  opacity: 0;
+/* Mobile Responsive */
+.mobile-header {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    background: #1a1b2e; /* Solid background for legibility */
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    max-height: 100vh;
+    border-radius: 0;
+    border-right: 1px solid var(--glass-border);
+  }
+
+  .page-container.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .mobile-hidden {
+    /* Handled by transform */
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 150;
+    backdrop-filter: blur(2px);
+  }
+
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    gap: 15px;
+  }
+
+  .menu-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+
+  .mobile-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--accent-color);
+  }
 }
 </style>
