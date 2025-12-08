@@ -60,7 +60,7 @@ const projects = ref([
       '精确的分页计算与平滑翻页动画',
       '自定义字体、字号与日夜间模式'
     ],
-    github: '#'
+    github: 'https://github.com/wqjack/ibook.git'
   },
   {
     id: 'blog',
