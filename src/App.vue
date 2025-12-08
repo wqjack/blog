@@ -5,6 +5,7 @@
     </div>
     <nav>
       <router-link to="/">Home</router-link>
+      <router-link to="/interview">Interview</router-link>
       <a href="#">Articles</a>
       <a href="#">Projects</a>
       <a href="#">About</a>
