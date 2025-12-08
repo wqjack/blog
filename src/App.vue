@@ -1,6 +1,7 @@
 <template>
   <header class="navbar glass-panel">
     <div class="logo">
+      <img src="/logo.svg" alt="Logo" class="logo-img" />
       <span class="logo-text">Jey<span class="highlight">.Dev</span></span>
     </div>
     <nav>
@@ -39,6 +40,22 @@
   top: 20px;
   z-index: 100;
   margin-bottom: 40px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img {
+  width: 40px;
+  height: 40px;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover .logo-img {
+  transform: rotate(-10deg);
 }
 
 .logo-text {
