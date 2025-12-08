@@ -7,7 +7,7 @@
       <router-link to="/">首页</router-link>
       <router-link to="/interview">面试题库</router-link>
       <router-link to="/articles">文章</router-link>
-      <a href="#">项目</a>
+      <router-link to="/projects">项目</router-link>
       <a href="#">关于</a>
     </nav>
     <button class="btn-sm">联系我</button>

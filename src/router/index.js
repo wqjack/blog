@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import InterviewView from '../views/InterviewView.vue'
 import ArticlesView from '../views/ArticlesView.vue'
 import ArticleDetailView from '../views/ArticleDetailView.vue'
+import ProjectsView from '../views/ProjectsView.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
             path: '/articles/:slug',
             name: 'article-detail',
             component: ArticleDetailView
+        },
+        {
+            path: '/projects',
+            name: 'projects',
+            component: ProjectsView
         }
     ]
 })
