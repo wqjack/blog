@@ -1,17 +1,30 @@
 <template>
-  <header class="navbar glass-panel">
-    <div class="logo">
-      <img src="/logo.svg" alt="Logo" class="logo-img" />
-      <span class="logo-text">Jey<span class="highlight">.Dev</span></span>
+  <header class="navbar glass-panel" :class="{ 'mobile-menu-open': isMenuOpen }">
+    <div class="navbar-top">
+      <div class="logo">
+        <img src="/logo.svg" alt="Logo" class="logo-img" />
+        <span class="logo-text">Jey<span class="highlight">.Dev</span></span>
+      </div>
+      
+      <!-- Mobile Toggle Button -->
+      <button class="hamburger md:hidden" @click="toggleMenu" aria-label="Toggle Menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </div>
-    <nav>
-      <router-link to="/">首页</router-link>
-      <router-link to="/interview">面试题库</router-link>
-      <router-link to="/articles">文章</router-link>
-      <router-link to="/projects">项目</router-link>
-      <a href="#">关于</a>
-    </nav>
-    <button class="btn-sm">联系我</button>
+
+    <!-- Navigation Links Container -->
+    <div class="nav-container" :class="{ 'show': isMenuOpen }">
+      <nav>
+        <router-link to="/" @click="closeMenu">首页</router-link>
+        <router-link to="/interview" @click="closeMenu">面试题库</router-link>
+        <router-link to="/articles" @click="closeMenu">文章</router-link>
+        <router-link to="/projects" @click="closeMenu">项目</router-link>
+        <a href="#" @click="closeMenu">关于</a>
+      </nav>
+      <a href="mailto:jeyzed999@gmail.com" class="btn-sm contact-btn">联系我</a>
+    </div>
   </header>
 
   <main>
@@ -28,6 +41,17 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+
+const isMenuOpen = ref(false)
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
+
+const closeMenu = () => {
+  isMenuOpen.value = false
+}
 </script>
 
 <style scoped>
@@ -38,8 +62,22 @@
   padding: 15px 30px;
   position: sticky;
   top: 20px;
-  z-index: 100;
+  z-index: 1000;
   margin-bottom: 40px;
+  transition: all 0.3s ease;
+}
+
+.navbar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: auto;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  gap: 30px;
 }
 
 .logo {
@@ -62,6 +100,7 @@
   font-size: 1.5rem;
   font-weight: 700;
   font-family: var(--font-heading);
+  color: var(--text-main);
 }
 
 .highlight {
@@ -76,6 +115,7 @@ nav {
 nav a {
   font-weight: 500;
   position: relative;
+  color: var(--text-main);
 }
 
 nav a.router-link-active {
@@ -106,11 +146,35 @@ nav a:hover::after {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
+  text-decoration: none;
+  font-size: 0.9rem;
+  display: inline-block;
 }
 
 .btn-sm:hover {
   background: var(--accent-color);
   color: white;
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.bar {
+  width: 100%;
+  height: 3px;
+  background-color: var(--text-main);
+  border-radius: 3px;
+  transition: all 0.3s ease;
 }
 
 footer {
@@ -132,14 +196,61 @@ footer {
   opacity: 0;
 }
 
+/* Mobile Responsive */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
+    align-items: stretch;
+    padding: 15px 20px;
+  }
+
+  .navbar-top {
+    width: 100%;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-container {
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    gap: 20px;
+  }
+
+  .nav-container.show {
+    display: flex;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
     gap: 20px;
   }
   
-  nav {
-    gap: 15px;
+  nav a {
+    font-size: 1.1rem;
+    padding: 10px;
+    display: block;
+    width: 100%;
+    text-align: center;
   }
+
+  .contact-btn {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+  }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
