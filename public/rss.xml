@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jey.Dev Blog</title>
+    <link>https://wqjack.github.io/blog</link>
+    <description>Frontend, Vue, React, and Tech Thoughts</description>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 09 Dec 2025 12:52:14 GMT</lastBuildDate>
+    <atom:link href="https://wqjack.github.io/blog/rss.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title><![CDATA[在 2024 年构建现代前端应用]]></title>
+      <link>https://wqjack.github.io/blog/#/articles/2024-modern-frontend</link>
+      <guid>https://wqjack.github.io/blog/#/articles/2024-modern-frontend</guid>
+      <description><![CDATA[探讨 Vue 3、Vite 和现代 CSS 工具链如何改变我们的开发方式。]]></description>
+      <pubDate>Mon, 20 May 2024 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title><![CDATA[深入理解 JavaScript 异步编程]]></title>
+      <link>https://wqjack.github.io/blog/#/articles/2023-async-js</link>
+      <guid>https://wqjack.github.io/blog/#/articles/2023-async-js</guid>
+      <description><![CDATA[从回调地狱到 Promise，再到 Async/Await，彻底搞懂 JS 异步进化史。]]></description>
+      <pubDate>Wed, 15 Nov 2023 00:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

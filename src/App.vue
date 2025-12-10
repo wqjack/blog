@@ -37,7 +37,7 @@
 
   <footer>
     <div class="footer-links">
-      <a href="/rss.xml" target="_blank" class="rss-link">
+      <a href="/blog/rss.xml" target="_blank" class="rss-link">
         <span class="icon">📡</span> RSS Feed
       </a>
     </div>

@@ -5,4 +5,14 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   base: '/blog/',
+  server: {
+    proxy: {
+      '/api/juejin': {
+        target: 'https://api.juejin.cn',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/juejin/, ''),
+        secure: false,
+      }
+    }
+  }
 })
