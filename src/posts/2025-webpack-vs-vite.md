@@ -1,3 +1,10 @@
+---
+title: Webpack vs Vite 面试总结
+date: 2025-11-20
+description: webPack和vite的区别
+tag: Frontend
+---
+
 # Webpack vs Vite 面试总结（含原理 + 对比 + 深度面试题）
 
 ---
